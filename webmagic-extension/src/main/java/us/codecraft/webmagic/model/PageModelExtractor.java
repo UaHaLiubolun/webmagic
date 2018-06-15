@@ -166,6 +166,7 @@ class PageModelExtractor {
     }
 
     private void initClassExtractors() {
+        // 处理targetUrl
         Annotation annotation = clazz.getAnnotation(TargetUrl.class);
         if (annotation == null) {
             targetUrlPatterns.add(Pattern.compile(".*"));
@@ -179,17 +180,20 @@ class PageModelExtractor {
                 targetUrlRegionSelector = new XpathSelector(targetUrl.sourceRegion());
             }
         }
+        // 处理helpUrl
         annotation = clazz.getAnnotation(HelpUrl.class);
         if (annotation != null) {
             HelpUrl helpUrl = (HelpUrl) annotation;
             String[] value = helpUrl.value();
             for (String s : value) {
+                // 替换正则某些字符
                 helpUrlPatterns.add(Pattern.compile(s.replace(".", "\\.").replace("*", "[^\"'#]*")));
             }
             if (!helpUrl.sourceRegion().equals("")) {
                 helpUrlRegionSelector = new XpathSelector(helpUrl.sourceRegion());
             }
         }
+        // 处理class 上的extractBy
         annotation = clazz.getAnnotation(ExtractBy.class);
         if (annotation != null) {
             ExtractBy extractBy = (ExtractBy) annotation;
@@ -199,6 +203,7 @@ class PageModelExtractor {
 
     public Object process(Page page) {
         boolean matched = false;
+        // 判断是否目标网址
         for (Pattern targetPattern : targetUrlPatterns) {
             if (targetPattern.matcher(page.getUrl().toString()).matches()) {
                 matched = true;
@@ -335,6 +340,7 @@ class PageModelExtractor {
         return objects;
     }
 
+    // 给model中属性赋值
     private void setField(Object o, FieldExtractor fieldExtractor, Object value) throws IllegalAccessException, InvocationTargetException {
         if (value == null) {
             return;

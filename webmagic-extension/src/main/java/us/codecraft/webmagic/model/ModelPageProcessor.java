@@ -47,6 +47,7 @@ class ModelPageProcessor implements PageProcessor {
     @Override
     public void process(Page page) {
         for (PageModelExtractor pageModelExtractor : pageModelExtractorList) {
+            // 检测是否HelpUrl网址，如果是则获取TargetUrl和HelpUrl
             if (extractLinks) {
                 extractLinks(page, pageModelExtractor.getHelpUrlRegionSelector(), pageModelExtractor.getHelpUrlPatterns());
                 extractLinks(page, pageModelExtractor.getTargetUrlRegionSelector(), pageModelExtractor.getTargetUrlPatterns());
@@ -63,6 +64,7 @@ class ModelPageProcessor implements PageProcessor {
         }
     }
 
+    // 获取新链接
     private void extractLinks(Page page, Selector urlRegionSelector, List<Pattern> urlPatterns) {
         List<String> links;
         if (urlRegionSelector == null) {
